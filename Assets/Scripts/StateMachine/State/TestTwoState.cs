@@ -3,24 +3,28 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class TestTwoState : State {
+    private StateMachine stateMachine;
+
+    public TestTwoState( StateMachine stateMachine ) {
+        this.stateMachine = stateMachine;
+    }
+
     public override IEnumerator SetUp() {
         AsyncOperation asyncOp = SceneManager.LoadSceneAsync( "TestScene2", LoadSceneMode.Additive );
         yield return asyncOp;
     }
 
-    public override void Enter( StateControl stateControl ) {
+    public override void Enter() {
         Debug.Log( "Enter TestTwoState" );   
     }
 
-    public override State Update( StateControl stateControl ) {
+    public override void Update() {
         if ( Input.GetKeyDown( KeyCode.Space ) ) {
-            return StateRepository.TEST_ONE_STATE;
+            stateMachine.ChangeState( StateRepository.TEST_ONE_STATE );
         }
-
-        return null;
     }
 
-    public override void Exit( StateControl stateControl ) {
+    public override void Exit() {
         Debug.Log( "Exit TestTwoState" );
     }
 

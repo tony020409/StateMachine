@@ -6,7 +6,7 @@ public class StateMachine : StateControl {
     private readonly AsyncProcessor processor;
     private readonly StateTransit stateTransit;
 
-    private State state = StateRepository.NULL_STATE;
+    private State state;
     private bool isTransitting = false;
 
     public StateMachine( AsyncProcessor processor, StateTransit stateTransit ) {
@@ -15,20 +15,18 @@ public class StateMachine : StateControl {
     }
 
     public void Initialize() {
-        processor.Process( Transit( StateRepository.TEST_ONE_STATE ) );
+        state = StateRepository.NULL_STATE;
+        ChangeState( StateRepository.TEST_ONE_STATE );
     }
 
     public void Tick() {
         if ( isTransitting == false ) {
-            UpdateState();
+            state.Update();
         }
     }
 
-    private void UpdateState() {
-        State nextState = state.Update( this );
-        if ( nextState != null ) {
-            processor.Process( Transit( nextState ) );
-        }
+    public void ChangeState( State nextState ) {
+        processor.Process( Transit( nextState ) );
     }
 
     private IEnumerator Transit( State nextState ) {
@@ -36,11 +34,11 @@ public class StateMachine : StateControl {
 
         yield return stateTransit.FadeIn( TRANSITION_TIME );
 
-        state.Exit( this );
+        state.Exit();
         state.Cleanup();
         state = nextState;
         yield return state.SetUp();
-        state.Enter( this );
+        state.Enter();
 
         yield return stateTransit.FadeOut( TRANSITION_TIME );
 

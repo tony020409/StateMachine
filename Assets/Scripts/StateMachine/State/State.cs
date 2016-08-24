@@ -5,15 +5,15 @@ public abstract class State {
         yield break;
     }
 
-    public virtual void Enter( StateControl stateControl ) {
+    public virtual void Enter() {
 
     }
 
-    public virtual State Update( StateControl stateControl ) {
-        return null;
+    public virtual void Update() {
+
     }
 
-    public virtual void Exit( StateControl stateControl ) {
+    public virtual void Exit() {
 
     }
 
